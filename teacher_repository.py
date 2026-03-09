@@ -1,3 +1,5 @@
+from typing import Any, Sequence, List
+
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -36,6 +38,24 @@ class TeacherRepository:
         query = (
             select(Teacher)
             .where(Teacher.id == teacher_id)
+            .options(joinedload(Teacher.profile),
+                     selectinload(Teacher.courses))
+        )
+
+        result = await self.db.execute(query)
+        return result.unique().scalars().first()
+
+    async def get_all(self, offset: int = 0, limit: int = 20) -> List[Teacher]:
+        query = (
+            select(Teacher).offset(offset).limit(limit)
+        )
+        result = await self.db.execute(query)
+        return list(result.unique().scalars().all())
+
+    async def teacher_get_by_email(self, email: str) -> Teacher | None:
+        query = (
+            select(Teacher)
+            .where(Teacher.email == email)
             .options(joinedload(Teacher.profile),
                      selectinload(Teacher.courses))
         )
