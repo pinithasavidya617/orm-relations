@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
-from sqlalchemy import String, func, Text, ForeignKey
+from sqlalchemy import String, func, Text, ForeignKey, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -35,17 +35,18 @@ class Courses(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     teacher_id: Mapped[int] = mapped_column(
-        ForeignKey("teacher.id", ondelete="CASCADE"),
+        ForeignKey("teachers.id", ondelete="CASCADE"),
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     code: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
-    credits: Mapped[Optional[str]] = mapped_column(Text)
+    credits: Mapped[Optional[int]] = mapped_column(default=5)
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=datetime.now())
 
     teacher: Mapped["Teacher"] = relationship(
         back_populates="courses", )
+
 
 class TeacherProfile(Base):
     __tablename__ = "teacher_profiles"

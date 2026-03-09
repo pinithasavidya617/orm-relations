@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
 
@@ -23,6 +23,22 @@ class TeacherProfileResponse(TeacherProfileBase):
     class Config:
         from_attributes = True
 
+
+class CourseBase(BaseModel):
+    name: str = Field(..., min_length=3, max_length=300)
+    code: str = Field(..., min_length=3, max_length=50)
+    description: Optional[str] = None
+    credits : int = Field(default=5, ge=1, le=10)
+    is_active: bool = Field(default=True)
+
+class CourseResponse(CourseBase):
+    id : int
+    teacher_id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
 class TeacherBase(BaseModel):
     name : str = Field(..., min_length=3, max_length=255)
     email: str
@@ -34,6 +50,7 @@ class TeacherResponse(TeacherBase):
     id: int
     created_at: datetime
     profile: Optional[TeacherProfileCreate] = None
+    courses: List[CourseResponse] = []
 
     class Config:
         from_attributes = True

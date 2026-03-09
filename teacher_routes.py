@@ -14,3 +14,9 @@ async def create_user(teacher_create : TeacherCreate, db: AsyncSession = Depends
     teacher_repo = TeacherRepository(db)
     teacher = await teacher_repo.create(data=teacher_create)
     return teacher
+
+@router.get("/{teacher_id}", response_model=TeacherResponse, status_code=status.HTTP_200_OK)
+async def get_teacher_by_id(teacher_id: int, db: AsyncSession = Depends(get_db)):
+    teacher_repo = TeacherRepository(db)
+    teacher = await teacher_repo.get_by_id(teacher_id)
+    return teacher
