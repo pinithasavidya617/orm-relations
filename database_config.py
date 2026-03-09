@@ -6,7 +6,7 @@ DATABASE_URL= "postgresql+asyncpg://postgres:admin@localhost:5432/institute_db"
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=False, #Set true if you need to see sql statements by orm
+    echo=True, #Set true if you need to see sql statements by orm
     pool_pre_ping=True, #verify the connection pool before using them
     future=True
 )

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import String, func, Text, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -24,17 +24,23 @@ class Teacher(Base):
     ) #uselist refers 1 to 1 relationship
     #lazy = joined mean, set loading to eager loading
 
+    courses: Mapped[List["Courses"]] = relationship(
+        back_populates="teacher",
+        cascade="all, delete-orphan",
+        lazy="selectin"
+    )
+
+class Courses(Base):
+    pass
+
 class TeacherProfile(Base):
     __tablename__ = "teacher_profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id", ondelete="CASCADE"))
-    qualifications : Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
-    department : Mapped[Optional[str]] = mapped_column(String(250), nullable=True)
-    office_number : Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
-    bio : Mapped[Text] = mapped_column(nullable=True)
-
-    teacher : Mapped[Optional[Teacher]] = relationship(
-        back_populates="profile"
-    )
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id", ondelete="CASCADE"))
+    qualifications: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
+    department: Mapped[Optional[str]] = mapped_column(String(250), nullable=True)
+    office_number: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    bio: Mapped[Optional[str]] = mapped_column(Text)
+    teacher: Mapped[Optional[Teacher]] = relationship(back_populates="profile")
 

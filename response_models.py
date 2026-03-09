@@ -5,11 +5,10 @@ from pydantic import BaseModel, Field
 
 
 class TeacherProfileBase(BaseModel):
-    qualification: Optional[str] = Field(None, max_length=300)
+    qualifications: Optional[str] = Field(None, max_length=300)
     department: Optional[str] = Field(None, max_length=200)
     office_number: Optional[str] = Field(None, max_length=30)
-    bio: Optional[str] = None
-
+    bio: Optional[str] = Field(None, max_length=300)
 
 class TeacherProfileCreate(TeacherProfileBase):
     pass
