@@ -27,11 +27,25 @@ class Teacher(Base):
     courses: Mapped[List["Courses"]] = relationship(
         back_populates="teacher",
         cascade="all, delete-orphan",
-        lazy="selectin"
+        lazy="selectin"   #in queries
     )
 
 class Courses(Base):
-    pass
+    __tablename__ = "courses"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    teacher_id: Mapped[int] = mapped_column(
+        ForeignKey("teacher.id", ondelete="CASCADE"),
+    )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    code: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=False)
+    credits: Mapped[Optional[str]] = mapped_column(Text)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), default=datetime.now())
+
+    teacher: Mapped["Teacher"] = relationship(
+        back_populates="courses", )
 
 class TeacherProfile(Base):
     __tablename__ = "teacher_profiles"
