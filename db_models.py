@@ -1,12 +1,29 @@
 from datetime import datetime
 from typing import Optional, List
 
-from sqlalchemy import String, func, Text, ForeignKey, Integer
+from sqlalchemy import String, func, Text, ForeignKey, Integer, Table, Column
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
     pass
+
+# M to M relation only create pure relationship table not a common type table
+enrollment = Table(
+    'enrollments',
+    Base.metadata,
+
+    Column('student_id',
+           Integer,
+           ForeignKey('students.id' , ondelete='CASCADE'),
+           primary_key=True),
+
+    Column('course_id',
+           Integer,
+           ForeignKey('courses.id' , ondelete='CASCADE'),
+           primary_key=True),
+)
+
 
 class Teacher(Base):
     __tablename__ = "teachers"
@@ -59,3 +76,17 @@ class TeacherProfile(Base):
     bio: Mapped[Optional[str]] = mapped_column(Text)
     teacher: Mapped[Optional[Teacher]] = relationship(back_populates="profile")
 
+
+class Student(Base):
+    __tablename__ = 'students'
+
+    id : Mapped[int] = mapped_column(primary_key=True , index=True )
+    name : Mapped[str] = mapped_column(String(300), nullable=False)
+    email : Mapped[str] = mapped_column(String(255), nullable=False)
+    enrollment_year : Mapped[int]
+
+    courses : Mapped[List["Course"]] = relationship(
+        secondary=enrollment,
+        back_populates="student",
+        lazy="selectin",
+    )

@@ -31,6 +31,13 @@ class CourseBase(BaseModel):
     credits : int = Field(default=5, ge=1, le=10)
     is_active: bool = Field(default=True)
 
+class CourseCreate(CourseBase):
+    def __init__(self, /, **data: Any):
+        super().__init__(null, data)
+        self.student_id = None
+
+    student_ids : List[int] = []
+
 class CourseResponse(CourseBase):
     id : int
     teacher_id: int
@@ -54,4 +61,20 @@ class TeacherResponse(TeacherBase):
 
     class Config:
         from_attributes = True
+
+
+class StudentBase(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    email: str
+    enrollment_year: int = Field(..., ge=2000, le=2100)
+
+class StudentCreate(StudentBase):
+    pass
+
+class StudentResponse(StudentBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 
